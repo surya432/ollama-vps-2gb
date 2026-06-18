@@ -16,7 +16,7 @@ services:
     command: pull qwen2.5-coder:0.5b
 
   litellm:
-    image: ghcr.io/berriai/litellm:lastest
+    image: ghcr.io/berriai/litellm:latest-stable
     container_name: litellm
     ports:
       - "4000:4000"
