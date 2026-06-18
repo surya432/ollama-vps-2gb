@@ -13,7 +13,7 @@ services:
       - ollama
     environment:
       - OLLAMA_HOST=ollama:11434
-    command: pull qwen2.5-coder:1.5b
+    command: pull qwen2.5-coder:0.5b
 
   litellm:
     image: ghcr.io/berriai/litellm:main-v1.40.0

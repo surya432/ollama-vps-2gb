@@ -1,7 +1,7 @@
 model_list:
-  - model_name: qwen2.5-coder:1.5b
+  - model_name: qwen2.5-coder:0.5b
     litellm_params:
-      model: ollama/qwen2.5-coder:1.5b
+      model: ollama/qwen2.5-coder:0.5b
       api_base: "http://ollama:11434"
 
 general_settings:
@@ -11,4 +11,4 @@ general_settings:
 litellm_settings:
   saved_keys:
     - api_key: "sk-rahasia-vps-kamu"
-      allowed_models: ["qwen2.5-coder:1.5b"]
+      allowed_models: ["qwen2.5-coder:0.5b"]
