@@ -1,0 +1,32 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama_storage:/root/.ollama
+    restart: always
+
+  # Container sementara untuk mendownload model otomatis
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ollama-pull
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_HOST=ollama:11434
+    command: pull qwen2.5-coder:1.5b
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-v1.40.0
+    container_name: litellm
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm/litellm_config.yaml:/app/config.yaml
+    command: [ "--config", "/app/config.yaml", "--port", "4000" ]
+    depends_on:
+      - ollama
+    restart: always
+
+volumes:
+  ollama_storage:
