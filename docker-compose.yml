@@ -1,13 +1,12 @@
 version: '3.8'
 
 services:
-  # 1. Database untuk LiteLLM
   db:
     image: postgres:15
     container_name: litellm_db
     environment:
       POSTGRES_USER: litellm
-      POSTGRES_PASSWORD: sukaIndonesia123!
+      POSTGRES_PASSWORD: sukaindonesia
       POSTGRES_DB: litellm_db
     volumes:
       - litellm_db_data:/var/lib/postgresql/data
@@ -15,7 +14,6 @@ services:
       - "5432:5432"
     restart: always
 
-  # 2. Ollama untuk menjalankan Model Lokal (Ditingkatkan untuk GPU AMD)
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
@@ -23,20 +21,29 @@ services:
       - /dev/kfd:/dev/kfd
       - /dev/dri:/dev/dri
     environment:
-      - HSA_OVERRIDE_GFX_VERSION=8.0.3  # RX 550 menggunakan arsitektur Polaris
+      - HSA_OVERRIDE_GFX_VERSION=8.0.3
       - OLLAMA_LLM_LIBRARY=rocm
+      # --- OPTIMASI AGAR TIDAK BLANK ---
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_NUM_PARALLEL=1
+      # Mematikan akses GPU jika sistem mulai tidak stabil (Optional)
+      # Jika PC tetap nge-blank, komen/hapus baris di bawah ini untuk pakai CPU saja
+      - OLLAMA_FLASH_ATTENTION=0
     volumes:
       - ollama_data:/root/.ollama
     ports:
       - "11434:11434"
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 4G # Batasi RAM sistem agar tidak jebol saat VRAM penuh
 
-  # 3. LiteLLM Gateway
   litellm:
     image: ghcr.io/berriai/litellm:main-latest
     container_name: litellm
     environment:
-      - DATABASE_URL=postgresql://litellm:sukaIndonesia123!@db:5432/litellm_db
+      - DATABASE_URL=postgresql://litellm:sukaindonesia@db:5432/litellm_db
       - STORE_MODEL_IN_DB=True
       - LITELLM_MASTER_KEY=sk-aku-master-key-admin
     ports:
