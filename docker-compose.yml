@@ -33,6 +33,7 @@ services:
       # Koneksi ke Database (PostgreSQL)
       - DATABASE_URL=postgresql://litellm:sukaindonesia@db:5432/litellm_db
       - STORE_MODEL_IN_DB=True
+      - LITELLM_MASTER_KEY=sk-aku-master-key-admin
     ports:
       - "4000:4000"
     depends_on:
