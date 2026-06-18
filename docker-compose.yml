@@ -7,7 +7,7 @@ services:
     container_name: litellm_db
     environment:
       POSTGRES_USER: litellm
-      POSTGRES_PASSWORD: sukaindonesia
+      POSTGRES_PASSWORD: sukaIndonesia123!
       POSTGRES_DB: litellm_db
     volumes:
       - litellm_db_data:/var/lib/postgresql/data
@@ -36,7 +36,7 @@ services:
     image: ghcr.io/berriai/litellm:main-latest
     container_name: litellm
     environment:
-      - DATABASE_URL=postgresql://litellm:sukaindonesia@db:5432/litellm_db
+      - DATABASE_URL=postgresql://litellm:sukaIndonesia123!@db:5432/litellm_db
       - STORE_MODEL_IN_DB=True
       - LITELLM_MASTER_KEY=sk-aku-master-key-admin
     ports:
