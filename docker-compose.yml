@@ -1,33 +1,45 @@
+version: '3.8'
+
 services:
+  # 1. Database untuk LiteLLM
+  db:
+    image: postgres:15
+    container_name: litellm_db
+    environment:
+      POSTGRES_USER: litellm
+      POSTGRES_PASSWORD: sukaindonesia
+      POSTGRES_DB: litellm_db
+    volumes:
+      - litellm_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+  # 2. Ollama untuk menjalankan Model Lokal
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
     volumes:
-      - ollama_storage:/root/.ollama
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
     restart: always
 
-  ollama-pull:
-    image: ollama/ollama:latest
-    container_name: ollama-pull
-    depends_on:
-      - ollama
-    environment:
-      - OLLAMA_HOST=ollama:11434
-    command: pull qwen2.5-coder:0.5b
-
+  # 3. LiteLLM Gateway
   litellm:
-    image: ghcr.io/berriai/litellm:latest-stable
+    image: ghcr.io/berriai/litellm:main-latest
     container_name: litellm
+    environment:
+      # Koneksi ke Database (PostgreSQL)
+      - DATABASE_URL=postgresql://litellm:sukaindonesia@db:5432/litellm_db
+      - STORE_MODEL_IN_DB=True
     ports:
       - "4000:4000"
-    volumes:
-      # KITA UBAH DISINI: Me-mount folder 'litellm' ke dalam '/app/config_folder'
-      - ./litellm:/app/config_folder
-    # Memerintahkan LiteLLM membaca file di dalam folder tersebut
-    command: [ "--config", "/app/config_folder/litellm_config.yaml", "--port", "4000", "--host", "0.0.0.0" ]
     depends_on:
+      - db
       - ollama
     restart: always
 
 volumes:
-  ollama_storage:
+  litellm_db_data:
+  ollama_data:
