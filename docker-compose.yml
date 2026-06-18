@@ -15,10 +15,16 @@ services:
       - "5432:5432"
     restart: always
 
-  # 2. Ollama untuk menjalankan Model Lokal
+  # 2. Ollama untuk menjalankan Model Lokal (Ditingkatkan untuk GPU AMD)
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    environment:
+      - HSA_OVERRIDE_GFX_VERSION=8.0.3  # RX 550 menggunakan arsitektur Polaris
+      - OLLAMA_LLM_LIBRARY=rocm
     volumes:
       - ollama_data:/root/.ollama
     ports:
@@ -30,7 +36,6 @@ services:
     image: ghcr.io/berriai/litellm:main-latest
     container_name: litellm
     environment:
-      # Koneksi ke Database (PostgreSQL)
       - DATABASE_URL=postgresql://litellm:sukaindonesia@db:5432/litellm_db
       - STORE_MODEL_IN_DB=True
       - LITELLM_MASTER_KEY=sk-aku-master-key-admin
